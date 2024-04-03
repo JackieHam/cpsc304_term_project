@@ -1,4 +1,4 @@
-drop table Record_Player_Ally cascade constraints;
+drop table Player_Info cascade constraints;
 drop table NPC_Ally1 cascade constraints;
 drop table NPC_Ally2 cascade constraints;
 drop table Player_Record1 cascade constraints;

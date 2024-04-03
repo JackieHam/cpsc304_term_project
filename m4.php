@@ -42,7 +42,7 @@ $show_debug_alert_messages = true; // show which methods are being triggered (se
 
 	<hr />
 
-	<!-- <h2>Insert Values into DemoTable</h2>
+	<!-- <h2>Insert Values into Player_Info</h2>
 	<form method="POST" action="oracle-test.php">
 		<input type="hidden" id="insertQueryRequest" name="insertQueryRequest">
 		Number: <input type="text" name="insNo"> <br /><br />
@@ -53,7 +53,7 @@ $show_debug_alert_messages = true; // show which methods are being triggered (se
 
 	<hr />
 
-	<h2>Update Name in DemoTable</h2>
+	<h2>Update Name in Player_Info</h2>
 	<p>The values are case sensitive and if you enter in the wrong case, the update statement will not do anything.</p>
 
 	<form method="POST" action="oracle-test.php">
@@ -66,7 +66,7 @@ $show_debug_alert_messages = true; // show which methods are being triggered (se
 
 	<hr /> -->
 
-	<h2>Count the Tuples in Record_Player_Ally</h2>
+	<h2>Count the Tuples in Player_Info</h2>
 	<form method="GET" action="m4.php">
 		<input type="hidden" id="countTupleRequest" name="countTupleRequest">
 		<input type="submit" name="countTuples"></p>
@@ -74,7 +74,7 @@ $show_debug_alert_messages = true; // show which methods are being triggered (se
 
 	<hr />
 
-	<h2>Display Tuples in Record_Player_Ally</h2>
+	<h2>Display Tuples in Player_Info</h2>
 	<form method="GET" action="m4.php">
 		<input type="hidden" id="displayTuplesRequest" name="displayTuplesRequest">
 		<input type="submit" name="displayTuples"></p>
@@ -184,7 +184,7 @@ $show_debug_alert_messages = true; // show which methods are being triggered (se
 
 	function printResult($result)
 	{ //prints results from a select statement
-		echo "<br>Retrieved data from table Record Player Ally:<br>";
+		echo "<br>Retrieved data from table Player Info:<br>";
 		echo "<table>";
 		echo "<tr><th>Player ID</th><th>Record ID</th><th>NPC ID</th><th>Player Name</th><th>Region</th><th>Join Date</th><th>In Game Hour</th><th>Ally Form Date</th><th>Number of Missions</th></tr>";
 
@@ -232,7 +232,7 @@ $show_debug_alert_messages = true; // show which methods are being triggered (se
 	// 	$new_name = $_POST['newName'];
 
 	// 	// you need the wrap the old name and new name values with single quotations
-	// 	executePlainSQL("UPDATE demoTable SET name='" . $new_name . "' WHERE name='" . $old_name . "'");
+	// 	executePlainSQL("UPDATE Player_Info SET name='" . $new_name . "' WHERE name='" . $old_name . "'");
 	// 	oci_commit($db_conn);
 	// }
 
@@ -267,7 +267,7 @@ $show_debug_alert_messages = true; // show which methods are being triggered (se
 	// 		$tuple
 	// 	);
 
-	// 	executeBoundSQL("insert into demoTable values (:bind1, :bind2)", $alltuples);
+	// 	executeBoundSQL("insert into Player_Info values (:bind1, :bind2)", $alltuples);
 	// 	oci_commit($db_conn);
 	// }
 
@@ -275,17 +275,17 @@ $show_debug_alert_messages = true; // show which methods are being triggered (se
 	{
 		global $db_conn;
 
-		$result = executePlainSQL("SELECT Count(*) FROM Record_Player_Ally");
+		$result = executePlainSQL("SELECT Count(*) FROM Player_Info");
 
 		if (($row = oci_fetch_row($result)) != false) {
-			echo "<br> The number of tuples in demoTable: " . $row[0] . "<br>";
+			echo "<br> The number of tuples in Player_Info: " . $row[0] . "<br>";
 		}
 	}
 
 	function handleDisplayRequest()
 	{
 		global $db_conn;
-		$result = executePlainSQL("SELECT * FROM Record_Player_Ally WHERE playerName = 'Tammy Na'");
+		$result = executePlainSQL("SELECT * FROM Player_Info");
 		printResult($result);
 	}
 
