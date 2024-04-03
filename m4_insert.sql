@@ -113,29 +113,29 @@
 	VALUES		('R7', 100);
 
 	INSERT 
-	INTO 		Record_Player_Ally
+	INTO 		Player_Info
 	VALUES		('P1', 'R1', 'N1', 'John Smith', 'North America', TO_DATE ('2024-02-02', 'YYYY-MM-DD'), 0, TO_DATE ('2024-02-02', 'YYYY-MM-DD'), 3);
 
 	INSERT 
-	INTO 		Record_Player_Ally
+	INTO 		Player_Info
 	VALUES 		('P2', 'R2', 'N2', 'David Thompson', 'Asia', TO_DATE ('2024-01-01', 'YYYY-MM-DD'), 50, TO_DATE ('2024-03-01', 'YYYY-MM-DD'), 4);
 
 	INSERT 
-	INTO 		Record_Player_Ally
+	INTO 		Player_Info
 	VALUES 		('P3', 'R3', 'N3', 'Jane Doe', 'Oceania', TO_DATE ('2018-08-05', 'YYYY-MM-DD'), 300, TO_DATE ('2018-08-05', 'YYYY-MM-DD'), 30);
 
 	INSERT 
-	INTO 		Record_Player_Ally
+	INTO 		Player_Info
 	VALUES 		('P4', 'R4', 'N4', 'Tammy Na', 'Asia', TO_DATE ('2020-10-28', 'YYYY-MM-DD'), 195, TO_DATE ('2021-10-29', 'YYYY-MM-DD'), 16);
 
 	INSERT 
-	INTO 		Record_Player_Ally
+	INTO 		Player_Info
 	VALUES 		('P5', 'R5', 'N5', 'Charleze Hernandez', 'South America', TO_DATE ('2021-09-30', 'YYYY-MM-DD'), 88, TO_DATE ('2021-10-30', 'YYYY-MM-DD'), 17);
 
 	INSERT 
-	INTO 		Record_Player_Ally 
+	INTO 		Player_Info 
 	VALUES 		('P6', 'R6', 'N6', 'Diego Garcia', 'South America', TO_DATE ('2019-05-22', 'YYYY-MM-DD'), 250, TO_DATE ('2019-05-22', 'YYYY-MM-DD'), 79);
 
 	INSERT 
-	INTO 		Record_Player_Ally 
+	INTO 		Player_Info 
 	VALUES 		('P7', 'R7', 'N7', 'Davu Abebe', 'Africa', TO_DATE ('2015-07-02', 'YYYY-MM-DD'), 100, TO_DATE ('2015-07-02', 'YYYY-MM-DD'), 99);

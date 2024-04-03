@@ -19,7 +19,7 @@ CREATE TABLE Player_Record2 (
 	totalPoints integer
 );
 
-CREATE TABLE Record_Player_Ally (
+CREATE TABLE Player_Info (
 	PID varchar(30) PRIMARY KEY, 
 	RID varchar(30) UNIQUE,
 	NID varchar(30) UNIQUE,
