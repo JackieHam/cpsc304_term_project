@@ -135,7 +135,3 @@
 	INSERT 
 	INTO 		Player_Info 
 	VALUES 		('P6', 'R6', 'N6', 'Diego Garcia', 'South America', TO_DATE ('2019-05-22', 'YYYY-MM-DD'), 250, TO_DATE ('2019-05-22', 'YYYY-MM-DD'), 79);
-
-	INSERT 
-	INTO 		Player_Info 
-	VALUES 		('P7', 'R7', 'N7', 'Davu Abebe', 'Africa', TO_DATE ('2015-07-02', 'YYYY-MM-DD'), 100, TO_DATE ('2015-07-02', 'YYYY-MM-DD'), 99);

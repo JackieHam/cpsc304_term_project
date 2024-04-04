@@ -18,7 +18,7 @@ $db_conn = NULL;	// login credentials are used in connectToDB()
 
 $success = true;	// keep track of errors so page redirects only if there are no errors
 
-$show_debug_alert_messages = true; // show which methods are being triggered (see debugAlertMessage())
+$show_debug_alert_messages = false; // show which methods are being triggered (see debugAlertMessage())
 
 // The next tag tells the web server to stop parsing the text as PHP. Use the
 // pair of tags wherever the content switches to PHP
@@ -31,7 +31,7 @@ $show_debug_alert_messages = true; // show which methods are being triggered (se
 </head>
 
 <body>
-	<h2>Reset</h2>
+	<h2>Reset All Tables</h2>
 	<p>If you wish to reset the table press on the reset button. If this is the first time you're running this page, you MUST use reset</p>
 
 	<form method="POST" action="m4.php">
@@ -42,18 +42,24 @@ $show_debug_alert_messages = true; // show which methods are being triggered (se
 
 	<hr />
 
-	<!-- <h2>Insert Values into Player_Info</h2>
-	<form method="POST" action="oracle-test.php">
+	<h2>Insert New Player Info</h2>
+	<form method="POST" action="m4.php">
 		<input type="hidden" id="insertQueryRequest" name="insertQueryRequest">
-		Number: <input type="text" name="insNo"> <br /><br />
-		Name: <input type="text" name="insName"> <br /><br />
-
+		Player ID: <input type="text" name="insPID"> <br /><br />
+		Record ID: <input type="text" name="insRID"> <br /><br />
+		NPC ID: <input type="text" name="insNID"> <br /><br />
+		Player Name: <input type="text" name="insPlayerName"> <br /><br />
+		Player Region: <input type="text" name="insplayerRegion"> <br /><br />
+		Player Join Date: <input type="date" name="insJoinDate"> <br /><br />
+		In Game Hour: <input type="number" name="insInGameHour"> <br /><br />
+		Ally formation Date: <input type="date" name="insFormDate"> <br /><br />
+		Number of Missions: <input type="number" name="insNumMissions"> <br /><br />
 		<input type="submit" value="Insert" name="insertSubmit"></p>
 	</form>
 
 	<hr />
 
-	<h2>Update Name in Player_Info</h2>
+	<!-- <h2>Update Name in Player_Info</h2>
 	<p>The values are case sensitive and if you enter in the wrong case, the update statement will not do anything.</p>
 
 	<form method="POST" action="oracle-test.php">
@@ -66,7 +72,7 @@ $show_debug_alert_messages = true; // show which methods are being triggered (se
 
 	<hr /> -->
 
-	<h2>Count the Tuples in Player_Info</h2>
+	<h2>Count the Tuples in Player Info</h2>
 	<form method="GET" action="m4.php">
 		<input type="hidden" id="countTupleRequest" name="countTupleRequest">
 		<input type="submit" name="countTuples"></p>
@@ -74,7 +80,7 @@ $show_debug_alert_messages = true; // show which methods are being triggered (se
 
 	<hr />
 
-	<h2>Display Tuples in Player_Info</h2>
+	<h2>Display Tuples in Player Info</h2>
 	<form method="GET" action="m4.php">
 		<input type="hidden" id="displayTuplesRequest" name="displayTuplesRequest">
 		<input type="submit" name="displayTuples"></p>
@@ -146,41 +152,41 @@ $show_debug_alert_messages = true; // show which methods are being triggered (se
 		return $statement;
 	}
 
-	// function executeBoundSQL($cmdstr, $list)
-	// {
-	// 	/* Sometimes the same statement will be executed several times with different values for the variables involved in the query.
-	// 	In this case you don't need to create the statement several times. Bound variables cause a statement to only be
-	// 	parsed once and you can reuse the statement. This is also very useful in protecting against SQL injection.
-	// 	See the sample code below for how this function is used */
+	function executeBoundSQL($cmdstr, $list)
+	{
+		/* Sometimes the same statement will be executed several times with different values for the variables involved in the query.
+		In this case you don't need to create the statement several times. Bound variables cause a statement to only be
+		parsed once and you can reuse the statement. This is also very useful in protecting against SQL injection.
+		See the sample code below for how this function is used */
 
-	// 	global $db_conn, $success;
-	// 	$statement = oci_parse($db_conn, $cmdstr);
+		global $db_conn, $success;
+		$statement = oci_parse($db_conn, $cmdstr);
 
-	// 	if (!$statement) {
-	// 		echo "<br>Cannot parse the following command: " . $cmdstr . "<br>";
-	// 		$e = OCI_Error($db_conn);
-	// 		echo htmlentities($e['message']);
-	// 		$success = False;
-	// 	}
+		if (!$statement) {
+			echo "<br>Cannot parse the following command: " . $cmdstr . "<br>";
+			$e = OCI_Error($db_conn);
+			echo htmlentities($e['message']);
+			$success = False;
+		}
 
-	// 	foreach ($list as $tuple) {
-	// 		foreach ($tuple as $bind => $val) {
-	// 			//echo $val;
-	// 			//echo "<br>".$bind."<br>";
-	// 			oci_bind_by_name($statement, $bind, $val);
-	// 			unset($val); //make sure you do not remove this. Otherwise $val will remain in an array object wrapper which will not be recognized by Oracle as a proper datatype
-	// 		}
+		foreach ($list as $tuple) {
+			foreach ($tuple as $bind => $val) {
+				//echo $val;
+				//echo "<br>".$bind."<br>";
+				oci_bind_by_name($statement, $bind, $val);
+				unset($val); //make sure you do not remove this. Otherwise $val will remain in an array object wrapper which will not be recognized by Oracle as a proper datatype
+			}
 
-	// 		$r = oci_execute($statement, OCI_DEFAULT);
-	// 		if (!$r) {
-	// 			echo "<br>Cannot execute the following command: " . $cmdstr . "<br>";
-	// 			$e = OCI_Error($statement); // For oci_execute errors, pass the statementhandle
-	// 			echo htmlentities($e['message']);
-	// 			echo "<br>";
-	// 			$success = False;
-	// 		}
-	// 	}
-	// }
+			$r = oci_execute($statement, OCI_DEFAULT);
+			if (!$r) {
+				echo "<br>Cannot execute the following command: " . $cmdstr . "<br>";
+				$e = OCI_Error($statement); // For oci_execute errors, pass the statementhandle
+				echo htmlentities($e['message']);
+				echo "<br>";
+				$success = False;
+			}
+		}
+	}
 
 	function printResult($result)
 	{ //prints results from a select statement
@@ -224,6 +230,7 @@ $show_debug_alert_messages = true; // show which methods are being triggered (se
 		oci_close($db_conn);
 	}
 
+
 	// function handleUpdateRequest()
 	// {
 	// 	global $db_conn;
@@ -253,23 +260,85 @@ $show_debug_alert_messages = true; // show which methods are being triggered (se
 		oci_commit($db_conn);
 	}
 
-	// function handleInsertRequest()
-	// {
-	// 	global $db_conn;
+	function handleInsertRequest()
+	{
+		global $db_conn, $success;
 
-	// 	//Getting the values from user and insert data into the table
-	// 	$tuple = array(
-	// 		":bind1" => $_POST['insNo'],
-	// 		":bind2" => $_POST['insName']
-	// 	);
+		//Getting the values from user and insert data into the table
+		$insPID = $_POST['insPID'];
+		$insRID = $_POST['insRID'];
+		$insNID = $_POST['insNID'];
+		$joinDate = new DateTime($_POST['insJoinDate']);
+		$formDate = new DateTime($_POST['insFormDate']);
+		$today = new DateTime();
 
-	// 	$alltuples = array(
-	// 		$tuple
-	// 	);
 
-	// 	executeBoundSQL("insert into Player_Info values (:bind1, :bind2)", $alltuples);
-	// 	oci_commit($db_conn);
-	// }
+		if (!$insPID || !$insRID || !$insNID) {
+			echo "<script type='text/javascript'>alert('Player ID, Record ID and NPC ID cannot be empty, please input a value!');</script>";
+			$success = False;
+			return;
+		}
+
+		$resultPID = executePlainSQL("SELECT Count(*) FROM Player_Info WHERE PID = '$insPID'");
+
+		if (($row = oci_fetch_row($resultPID)) != false && $row[0] > 0) {
+			echo "<script type='text/javascript'>alert('Player ID \"$insPID\" already exists, and you cannot create duplicated records.');</script>";
+			$success = False;
+			return;
+		}
+
+		$resultRID1 = executePlainSQL ("SELECT Count(*) FROM Player_Record2 WHERE RID = '$insRID'");
+		$resultRID2 = executePlainSQL ("SELECT Count(*) FROM Player_Info WHERE RID = '$insRID'");
+		if (($row = oci_fetch_row($resultRID1)) != false && $row[0] == 0) {
+			echo "<script type='text/javascript'>alert('Record ID \"$insRID\" does not exist yet, pleasae create corresponding record in Player Record table 2 first.');</script>";
+			$success = False;
+			return;
+		} else if (($row = oci_fetch_row($resultRID2)) != false && $row[0] > 0) {
+			echo "<script type='text/javascript'>alert('Player Info with Record ID \"$insRID\" already exists, and you cannot create duplicated records.');</script>";
+			$success = False;
+			return;
+		}
+
+		$resultNID1 = executePlainSQL ("SELECT Count(*) FROM NPC_Ally2 WHERE NID = '$insNID'");
+		$resultNID2 = executePlainSQL ("SELECT Count(*) FROM Player_Info WHERE NID = '$insNID'");
+
+		if (($row = oci_fetch_row($resultNID1)) != false && $row[0] == 0) {
+			echo "<script type='text/javascript'>alert('NPC ID \"$insNID\" does not exist yet, pleasae create corresponding record in NPC table 2 first.');</script>";
+			$success = False;
+			return;
+		} else if (($row = oci_fetch_row($resultNID2)) != false && $row[0] > 0) {
+			echo "<script type='text/javascript'>alert('Player Info with NPC ID \"$insNID\" already exists, and you cannot create duplicated records.');</script>";
+			$success = False;
+			return;
+		}
+
+		if ($joinDate > $today || $formDate > $today) {
+			echo "<script type='text/javascript'>alert('Date has to be on or before today\\'s date.');</script>";
+			$success = False;
+			return;
+		}
+
+
+
+		$tuple = array(
+			":bind1" => $_POST['insPID'],
+			":bind2" => $_POST['insRID'],
+			":bind3" => $_POST['insNID'],
+			":bind4" => $_POST['insPlayerName'],
+			":bind5" => $_POST['insplayerRegion'],
+			":bind6" => $_POST['insJoinDate'],
+			":bind7" => $_POST['insInGameHour'],
+			":bind8" => $_POST['insFormDate'],
+			":bind9" => $_POST['insNumMissions']
+		);
+
+		$alltuples = array(
+			$tuple
+		);
+
+		executeBoundSQL("insert into Player_Info values (:bind1, :bind2, :bind3, :bind4, :bind5, TO_DATE(:bind6, 'YYYY-MM-DD'), :bind7, TO_DATE(:bind8, 'YYYY-MM-DD'), :bind9)", $alltuples);
+		oci_commit($db_conn);
+	}
 
 	function handleCountRequest()
 	{
@@ -278,7 +347,7 @@ $show_debug_alert_messages = true; // show which methods are being triggered (se
 		$result = executePlainSQL("SELECT Count(*) FROM Player_Info");
 
 		if (($row = oci_fetch_row($result)) != false) {
-			echo "<br> The number of tuples in Player_Info: " . $row[0] . "<br>";
+			echo "<br> The number of tuples in Player Info: " . $row[0] . "<br>";
 		}
 	}
 
@@ -298,8 +367,8 @@ $show_debug_alert_messages = true; // show which methods are being triggered (se
 				handleResetRequest();
 			// } else if (array_key_exists('updateQueryRequest', $_POST)) {
 			// 	handleUpdateRequest();
-			// } else if (array_key_exists('insertQueryRequest', $_POST)) {
-			// 	handleInsertRequest();
+			} else if (array_key_exists('insertQueryRequest', $_POST)) {
+				handleInsertRequest();
 			}
 
 			disconnectFromDB();
