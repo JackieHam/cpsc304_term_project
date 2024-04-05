@@ -28,6 +28,11 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 <head>
 	<title>Group 72 M4, M5</title>
+	<style>
+	.hidden {
+		display: none;
+	}
+	</style>
 </head>
 
 <body>
@@ -59,6 +64,62 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	<hr />
 
+
+	<h2>Search for Player Info (case sensitive, please make sure you entered the correct case)</h2>
+	<form method="GET" action="m4.php">
+	<input type="hidden" id="selectQueryRequest" name="selectQueryRequest">
+		<!-- Player ID: <input type="text" name="selPID"> <br /><br />
+		<select name="logicalOperator2">
+			<option value = "N/A">N/A</option>
+			<option value = "AND">AND</option>
+			<option value = "OR">OR</option>
+		</select>
+		Record ID: <input type="text" name="selRID"> <br /><br />
+		<select name="logicalOperator3">
+			<option value = "N/A">N/A</option>
+			<option value = "AND">AND</option>
+			<option value = "OR">OR</option>
+		</select>
+		NPC ID: <input type="text" name="selNID"> <br /><br />
+		<select name="logicalOperator4">
+			<option value = "N/A">N/A</option>
+			<option value = "AND">AND</option>
+			<option value = "OR">OR</option>
+		</select> -->
+		Player Name: <input type="text" name="selPlayerName"> <br /><br />
+		<select name="logicalOperator5">
+			<option value = "N/A">N/A</option>
+			<option value = "AND">AND</option>
+			<option value = "OR">OR</option>
+		</select>
+		Player Region: <input type="text" name="selPlayerRegion"> <br /><br />
+		<select name="logicalOperator6">
+			<option value = "N/A">N/A</option>
+			<option value = "AND">AND</option>
+			<option value = "OR">OR</option>
+		</select>
+		Player Join Date: <input type="date" name="selJoinDate"> <br /><br />
+		<select name="logicalOperator7">
+			<option value = "N/A">N/A</option>
+			<option value = "AND">AND</option>
+			<option value = "OR">OR</option>
+		</select>
+		In Game Hour: <input type="number" name="selInGameHour"> <br /><br />
+		<select name="logicalOperator8">
+			<option value = "N/A">N/A</option>
+			<option value = "AND">AND</option>
+			<option value = "OR">OR</option>
+		</select>
+		Ally formation Date: <input type="date" name="selFormDate"> <br /><br />
+		<select name="logicalOperator9">
+			<option value = "N/A">N/A</option>
+			<option value = "AND">AND</option>
+			<option value = "OR">OR</option>
+		</select>
+		Number of Missions: <input type="number" name="selNumMissions"> <br /><br />
+		<input type="submit" value="Search" name="selectSubmit"></p>
+
+	<hr />
 	<!-- <h2>Update Name in Player_Info</h2>
 	<p>The values are case sensitive and if you enter in the wrong case, the update statement will not do anything.</p>
 
@@ -247,17 +308,11 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 	{
 		global $db_conn;
 		// Drop old table
-		executeSQLScript("m4_drop.sql");
+		executeSQLScript("m4.sql");
+		oci_commit($db_conn);
 
 		// Create new table
 		echo "<br> creating new tables <br>";
-		executeSQLScript("m4_create.sql");
-		oci_commit($db_conn);
-
-		// Insert values
-		echo "<br> inserting values into tables <br>";
-		executeSQLScript("m4_insert.sql");
-		oci_commit($db_conn);
 	}
 
 	function handleInsertRequest()
@@ -318,8 +373,6 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 			return;
 		}
 
-
-
 		$tuple = array(
 			":bind1" => $_POST['insPID'],
 			":bind2" => $_POST['insRID'],
@@ -337,7 +390,80 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 		);
 
 		executeBoundSQL("insert into Player_Info values (:bind1, :bind2, :bind3, :bind4, :bind5, TO_DATE(:bind6, 'YYYY-MM-DD'), :bind7, TO_DATE(:bind8, 'YYYY-MM-DD'), :bind9)", $alltuples);
+		echo "<script type='text/javascript'>alert('Successfully added the entry!');</script>";
 		oci_commit($db_conn);
+	}
+
+	function handleSelectRequest() {
+		global $db_conn;
+
+
+		// $fieldName1 = "PID";
+		// $fieldValue1 = $_GET["selPID"];
+
+		// $log2= $_GET["logicalOperator2"];
+		// $fieldName2 = "RID";
+		// $fieldValue2 = $_GET["selRID"];
+
+		// $log3= $_GET["logicalOperator3"];
+		// $fieldName3 = "NID";
+		// $fieldValue3 = $_GET["selNID"];
+
+		// $log4= $_GET["logicalOperator4"];
+		$fieldName4 = "playerName";
+		$fieldValue4 = $_GET["selPlayerName"];
+		$whereClause = "WHERE $fieldName4 LIKE '%$fieldValue4%'";
+
+		if (!$fieldValue4) {
+			echo "<script type='text/javascript'>alert('You have to input a Player Name!');</script>";
+			$success = False;
+		}
+
+		$log5= $_GET["logicalOperator5"];
+		$fieldName5 = "region";
+		$fieldValue5 = $_GET["selPlayerRegion"];
+
+		$log6= $_GET["logicalOperator6"];
+		$fieldName6 = "joinDate";
+		$fieldValue6 = $_GET["selJoinDate"];
+
+		$log7= $_GET["logicalOperator7"];
+		$fieldName7 = "inGameHour";
+		$fieldValue7 = $_GET["selInGameHour"];
+
+		$log8= $_GET["logicalOperator8"];
+		$fieldName8 = "formDate";
+		$fieldValue8 = $_GET["selFormDate"];
+
+		$log9= $_GET["logicalOperator9"];
+		$fieldName9 = "numMissions";
+		$fieldValue9 = $_GET["selNumMissions"];
+
+		for ($i = 5; $i <= 9; $i++) {
+			$logicalOperator = ${"log$i"};
+			$fieldName = ${"fieldName$i"};
+			$fieldValue = ${"fieldValue$i"};
+
+			$dateFormat = 'Y-m-d';
+			$dateString = $fieldValue;
+
+			$date = DateTime::createFromFormat($dateFormat, $dateString);
+
+
+			if ($logicalOperator !== "N/A" && !empty($fieldValue)) {
+				if (is_numeric($fieldValue)) {
+					$whereClause .= " $logicalOperator $fieldName = $fieldValue";
+				} else if ($date && $date->format($dateFormat) === $dateString) {
+					$whereClause .= " $logicalOperator $fieldName = TO_DATE('$fieldValue', 'YYYY-MM-DD')";
+				} else {
+					$whereClause .= " $logicalOperator $fieldName = '$fieldValue'";
+				}
+			}
+		}
+
+		echo $whereClause;
+		$result = executePlainSQL("SELECT * FROM Player_Info $whereClause");
+		printResult($result);
 	}
 
 	function handleCountRequest()
@@ -370,7 +496,6 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 			} else if (array_key_exists('insertQueryRequest', $_POST)) {
 				handleInsertRequest();
 			}
-
 			disconnectFromDB();
 		}
 	}
@@ -384,15 +509,15 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 				handleCountRequest();
 			} elseif (array_key_exists('displayTuples', $_GET)) {
 				handleDisplayRequest();
-			}
-
+			} else if (array_key_exists('selectQueryRequest', $_GET))
+				handleSelectRequest();
 			disconnectFromDB();
 		}
 	}
 
 	if (isset($_POST['reset']) || isset($_POST['updateSubmit']) || isset($_POST['insertSubmit'])) {
 		handlePOSTRequest();
-	} else if (isset($_GET['countTupleRequest']) || isset($_GET['displayTuplesRequest'])) {
+	} else if (isset($_GET['countTupleRequest']) || isset($_GET['displayTuplesRequest']) || isset($_GET['selectQueryRequest']) ) {
 		handleGETRequest();
 	}
 

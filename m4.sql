@@ -1,3 +1,58 @@
+drop table Player_Info cascade constraints;
+drop table NPC_Ally1 cascade constraints;
+drop table NPC_Ally2 cascade constraints;
+drop table Player_Record1 cascade constraints;
+drop table Player_Record2 cascade constraints;
+drop table Mission_Chosen cascade constraints;
+drop table Mission1 cascade constraints;
+drop table Mission2 cascade constraints;
+drop table Area1 cascade constraints;
+drop table Area2 cascade constraints;
+drop table Battle cascade constraints;
+drop table Boss1 cascade constraints;
+drop table Boss2 cascade constraints;
+drop table Minion cascade constraints;
+drop table Badge1 cascade constraints;
+drop table Badge2 cascade constraints;
+drop table Achievement_Unlocked1 cascade constraints;
+drop table Achievement_Unlocked2 cascade constraints;
+
+
+CREATE TABLE NPC_Ally1 (
+	perk varchar(30) PRIMARY KEY, 
+	pointDeduction integer DEFAULT 0
+);
+
+CREATE TABLE NPC_Ally2 (
+	NID varchar(30) PRIMARY KEY,
+	perk varchar(100)
+);
+
+CREATE TABLE Player_Record1 (
+	totalPoints integer PRIMARY KEY,
+	overallRanking integer DEFAULT -1
+);
+
+CREATE TABLE Player_Record2 (
+	RID varchar(30) PRIMARY KEY,
+	totalPoints integer
+);
+
+CREATE TABLE Player_Info (
+	PID varchar(30) PRIMARY KEY, 
+	RID varchar(30) UNIQUE,
+	NID varchar(30) UNIQUE,
+	playerName varchar(60), 
+	region varchar(60), 
+	joinDate date, 
+	inGameHour integer DEFAULT 0,
+	formDate date,
+	numMissions integer,
+	FOREIGN KEY(RID) references Player_Record2 ON DELETE CASCADE,
+	FOREIGN KEY(NID) references NPC_Ally2 ON DELETE CASCADE
+);
+
+
 	INSERT
 	INTO 		NPC_Ally1 (perk, pointDeduction)
 	VALUES		('Firebreathing', 4);
