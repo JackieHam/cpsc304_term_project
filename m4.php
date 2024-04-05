@@ -28,11 +28,6 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 <head>
 	<title>Group 72 M4, M5</title>
-	<style>
-	.hidden {
-		display: none;
-	}
-	</style>
 </head>
 
 <body>
@@ -67,25 +62,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	<h2>Search for Player Info (case sensitive, please make sure you entered the correct case)</h2>
 	<form method="GET" action="m4.php">
-	<input type="hidden" id="selectQueryRequest" name="selectQueryRequest">
-		<!-- Player ID: <input type="text" name="selPID"> <br /><br />
-		<select name="logicalOperator2">
-			<option value = "N/A">N/A</option>
-			<option value = "AND">AND</option>
-			<option value = "OR">OR</option>
-		</select>
-		Record ID: <input type="text" name="selRID"> <br /><br />
-		<select name="logicalOperator3">
-			<option value = "N/A">N/A</option>
-			<option value = "AND">AND</option>
-			<option value = "OR">OR</option>
-		</select>
-		NPC ID: <input type="text" name="selNID"> <br /><br />
-		<select name="logicalOperator4">
-			<option value = "N/A">N/A</option>
-			<option value = "AND">AND</option>
-			<option value = "OR">OR</option>
-		</select> -->
+	<input type="hidden" name="selectQueryRequest">
 		Player Name: <input type="text" name="selPlayerName"> <br /><br />
 		<select name="logicalOperator5">
 			<option value = "N/A">N/A</option>
@@ -117,7 +94,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 			<option value = "OR">OR</option>
 		</select>
 		Number of Missions: <input type="number" name="selNumMissions"> <br /><br />
-		<input type="submit" value="Search" name="selectSubmit"></p>
+		<input type="submit" name="selectSubmit"></p>
 
 	<hr />
 	<!-- <h2>Update Name in Player_Info</h2>
@@ -132,6 +109,14 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 	</form>
 
 	<hr /> -->
+
+	<h2>Show Total In Game Hours of All Players by Region</h2>
+	<form method="GET" action="m4.php">
+		<input type="hidden" name="aggGroupByRequest">
+    	<input type="submit" name="aggGroupBy">
+	</form>
+
+	<hr />
 
 	<h2>Count the Tuples in Player Info</h2>
 	<form method="GET" action="m4.php">
@@ -261,6 +246,8 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 		echo "</table>";
 	}
+
+
 
 	function connectToDB()
 	{
@@ -397,19 +384,6 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 	function handleSelectRequest() {
 		global $db_conn;
 
-
-		// $fieldName1 = "PID";
-		// $fieldValue1 = $_GET["selPID"];
-
-		// $log2= $_GET["logicalOperator2"];
-		// $fieldName2 = "RID";
-		// $fieldValue2 = $_GET["selRID"];
-
-		// $log3= $_GET["logicalOperator3"];
-		// $fieldName3 = "NID";
-		// $fieldValue3 = $_GET["selNID"];
-
-		// $log4= $_GET["logicalOperator4"];
 		$fieldName4 = "playerName";
 		$fieldValue4 = $_GET["selPlayerName"];
 		$whereClause = "WHERE $fieldName4 LIKE '%$fieldValue4%'";
@@ -464,7 +438,29 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 		echo $whereClause;
 		$result = executePlainSQL("SELECT * FROM Player_Info $whereClause");
 		printResult($result);
+
+		echo "<script type='text/javascript'>alert('Successfully retrieved records!');</script>";
 	}
+
+	
+	function handleAggGroupByRequest() {
+		global $db_conn;
+
+		$result = executePlainSQL("SELECT region, sum(inGameHour) AS total_hours FROM Player_Info GROUP BY region");
+		
+		echo "<br>Total Number of Hours in Game Grouped by Region:<br>";
+		echo "<table>";
+		echo "<tr><th>Region</th><th>Total in Game Hours by All Players</th></tr>";
+
+		while ($row = OCI_Fetch_Array($result, OCI_ASSOC)) {
+			echo "<tr><td>" . $row["REGION"] . "</td><td>" . $row["TOTAL_HOURS"] . "</td></tr>";
+		}
+
+		echo "</table>";
+
+		echo "<script type='text/javascript'>alert('Successfully retrieved data!');</script>";
+	}
+
 
 	function handleCountRequest()
 	{
@@ -509,15 +505,18 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 				handleCountRequest();
 			} elseif (array_key_exists('displayTuples', $_GET)) {
 				handleDisplayRequest();
-			} else if (array_key_exists('selectQueryRequest', $_GET))
+			} else if (array_key_exists('selectSubmit', $_GET)) {
 				handleSelectRequest();
-			disconnectFromDB();
+			} else if (array_key_exists('aggGroupBy', $_GET)) {
+				handleAggGroupByRequest();
+			}
+				disconnectFromDB();
 		}
 	}
 
 	if (isset($_POST['reset']) || isset($_POST['updateSubmit']) || isset($_POST['insertSubmit'])) {
 		handlePOSTRequest();
-	} else if (isset($_GET['countTupleRequest']) || isset($_GET['displayTuplesRequest']) || isset($_GET['selectQueryRequest']) ) {
+	} else if (isset($_GET['countTupleRequest']) || isset($_GET['displayTuplesRequest']) || isset($_GET['selectQueryRequest']) || isset($_GET['aggGroupByRequest'])) {
 		handleGETRequest();
 	}
 
