@@ -15,7 +15,6 @@ CREATE TABLE Player_Record1 (
 
 CREATE TABLE Player_Record2 (
 	RID varchar(30) PRIMARY KEY,
-	PID varchar(30),
 	totalPoints integer
 );
 
