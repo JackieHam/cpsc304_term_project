@@ -62,7 +62,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	<h2>Search for Player Info (case sensitive, please make sure you entered the correct case)</h2>
 	<form method="GET" action="m4.php">
-	<input type="hidden" name="selectQueryRequest">
+	<input type="hidden" id = "selectQueryRequest" name="selectQueryRequest">
 		Player Name: <input type="text" name="selPlayerName"> <br /><br />
 		<select name="logicalOperator5">
 			<option value = "N/A">N/A</option>
@@ -97,23 +97,19 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 		<input type="submit" name="selectSubmit"></p>
 
 	<hr />
-	<!-- <h2>Update Name in Player_Info</h2>
-	<p>The values are case sensitive and if you enter in the wrong case, the update statement will not do anything.</p>
-
-	<form method="POST" action="oracle-test.php">
-		<input type="hidden" id="updateQueryRequest" name="updateQueryRequest">
-		Old Name: <input type="text" name="oldName"> <br /><br />
-		New Name: <input type="text" name="newName"> <br /><br />
-
-		<input type="submit" value="Update" name="updateSubmit"></p>
-	</form>
-
-	<hr /> -->
 
 	<h2>Show Total In Game Hours of All Players by Region</h2>
 	<form method="GET" action="m4.php">
-		<input type="hidden" name="aggGroupByRequest">
+		<input type="hidden" id="aggGroupByRequest" name="aggGroupByRequest">
     	<input type="submit" name="aggGroupBy">
+	</form>
+
+	<hr />
+
+	<h2>Show Total Missions of All Player by Region (only show regions with total missions >= 10)</h2>
+	<form method="GET" action="m4.php">
+		<input type="hidden" id="aggHavingRequest" name="aggHavingRequest">
+    	<input type="submit" name="aggHaving">
 	</form>
 
 	<hr />
@@ -299,7 +295,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 		oci_commit($db_conn);
 
 		// Create new table
-		echo "<br> creating new tables <br>";
+		echo "<script type='text/javascript'>alert('Successfully reset the database!');</script>";
 	}
 
 	function handleInsertRequest()
@@ -461,6 +457,24 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 		echo "<script type='text/javascript'>alert('Successfully retrieved data!');</script>";
 	}
 
+	function handleAggHavingRequest() {
+		global $db_conn;
+
+		$result = executePlainSQL("SELECT region, sum(numMissions) AS total_missions FROM Player_Info GROUP BY region HAVING sum(numMissions) >= 10");
+		
+		echo "<br>Total Number of Missions in Game Grouped by Region:<br>";
+		echo "<table>";
+		echo "<tr><th>Region</th><th>Total in Game Missions</th></tr>";
+
+		while ($row = OCI_Fetch_Array($result, OCI_ASSOC)) {
+			echo "<tr><td>" . $row["REGION"] . "</td><td>" . $row["TOTAL_MISSIONS"] . "</td></tr>";
+		}
+
+		echo "</table>";
+
+		echo "<script type='text/javascript'>alert('Successfully retrieved data!');</script>";
+	}
+
 
 	function handleCountRequest()
 	{
@@ -509,6 +523,8 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 				handleSelectRequest();
 			} else if (array_key_exists('aggGroupBy', $_GET)) {
 				handleAggGroupByRequest();
+			} else if (array_key_exists('aggHaving', $_GET)) {
+				handleAggHavingRequest();
 			}
 				disconnectFromDB();
 		}
@@ -516,7 +532,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	if (isset($_POST['reset']) || isset($_POST['updateSubmit']) || isset($_POST['insertSubmit'])) {
 		handlePOSTRequest();
-	} else if (isset($_GET['countTupleRequest']) || isset($_GET['displayTuplesRequest']) || isset($_GET['selectQueryRequest']) || isset($_GET['aggGroupByRequest'])) {
+	} else if (isset($_GET['countTupleRequest']) || isset($_GET['displayTuplesRequest']) || isset($_GET['selectQueryRequest']) || isset($_GET['aggGroupByRequest']) || isset($_GET['aggHavingRequest'])) {
 		handleGETRequest();
 	}
 
