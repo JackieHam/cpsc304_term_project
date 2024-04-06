@@ -9,3 +9,4 @@ in different areas of the map. They will be able to get rewards after each battl
 The PlayerRecord will store the total points that the player has earned on their missions so far, which determines their overall ranking. It also stores the data for 
 each mission, which includes the completion status and attempt history. The stats for each attempt at a Mission is added to that Mission's attempt history. In 
 addition, the attempt history for each area is also included in an attempt of a Mission. 
+- The languages that we used for the frontend is PHP and HTML , whereas for the backend we used PHP and Oracle.  
