@@ -95,6 +95,51 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 		<input type="submit" name="displayTuples"></p>
 	</form>
 
+	<hr />
+
+<!-- View All Tuples in Player_Record2 Table -->
+	<h2>Display All Records in Player Record</h2>
+	<form method="GET" action="m4.php">
+		<input type="hidden" id="displayrecordRequest" name="displayrecordRequest">
+		<input type="submit" name="displayrecord"></p>
+	</form>
+
+<!-- Join Player_Info, Player_Record2-->
+	<h2>Display Player Info and Player Record of Players Satisfying Criteria</h2>
+	<form method="GET" action="m4.php">
+		<input type="hidden" id="joinRequest" name="joinRequest">
+		Total Points >= <input type="integer" name="minPoint"> <br /><br />
+		<input type="submit" name="join"></p>
+	</form>
+
+	<hr />
+
+<!-- View All Tuples in Mission Table -->
+	<h2>Display All Records in Mission</h2>
+	<form method="GET" action="m4.php">
+		<input type="hidden" id="displaymissionRequest" name="displaymissionRequest">
+		<input type="submit" name="displaymission"></p>
+	</form>
+
+	<hr />
+
+<!-- Nested Aggregation on Mission2 -->
+	<h2>Compute Maximum Average Time (Minutes) Spent on Each Mission Grouped by Record ID</h2>
+	<form method="GET" action="m4.php">
+		<input type="hidden" id="nestedAggRequest" name="nestedAggRequest">
+		<input type="submit" name="nestedAgg"></p>
+	</form>
+
+	<hr />
+
+<!-- Division on Player_Record2 and Mission2-->
+	<h2>Find Record IDs of Records that Track All Missions</h2>
+	<form method="GET" action="m4.php">
+		<input type="hidden" id="divisionRequest" name="divisionRequest">
+		<input type="submit" name="division"></p>
+	</form>
+
+	<hr />
 
 	<?php
 	// The following code will be parsed as PHP
