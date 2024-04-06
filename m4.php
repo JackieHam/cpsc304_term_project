@@ -71,6 +71,22 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
         </form>
     <hr />
 
+<!-- Update -->
+<h2>Update Attribute(s) in Player_Info</h2>
+    <p>The values are case sensitive and if you enter in the wrong case, the update statement will not do anything.</p>
+
+    <form method="POST" action="m4.php">
+        <input type="hidden" id="updateQueryRequest" name="updateQueryRequest">
+        Enter Player ID to Update: <input type="text", name="idToUpdate"> <br /><br />
+        New Player Name: <input type="text" name="insPlayerName"> <br /><br />
+        New Player Region: <input type="text" name="insplayerRegion"> <br /><br />
+        New Player Join Date: <input type="date" name="insJoinDate"> <br /><br />
+        New In Game Hour: <input type="number" name="insInGameHour"> <br /><br />
+        New Ally formation Date: <input type="date" name="insFormDate"> <br /><br />
+        New Number of Missions: <input type="number" name="insNumMissions"> <br /><br />
+        <input type="submit" value="Update" name="updateSubmit"></p>
+    </form>
+
 <!-- Selection -->
 	<h2>Search for Player Info (case sensitive, please make sure you entered the correct case)</h2>
 	<form method="GET" action="m4.php">
@@ -334,19 +350,6 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 		oci_close($db_conn);
 	}
 
-
-	// function handleUpdateRequest()
-	// {
-	// 	global $db_conn;
-
-	// 	$old_name = $_POST['oldName'];
-	// 	$new_name = $_POST['newName'];
-
-	// 	// you need the wrap the old name and new name values with single quotations
-	// 	executePlainSQL("UPDATE Player_Info SET name='" . $new_name . "' WHERE name='" . $old_name . "'");
-	// 	oci_commit($db_conn);
-	// }
-
 	function handleResetRequest()
 	{
 		global $db_conn;
@@ -465,6 +468,30 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 		oci_commit($db_conn);
 	}
 
+	function handleUpdateRequest()
+    {
+        global $db_conn;
+
+        $selected_pid = $_POST['idToUpdate'];
+
+        $new_pname = $_POST['insPlayerName'];
+        $new_pregion = $_POST['insplayerRegion'];
+        $new_pjoindate = $_POST['insJoinDate'];
+        $new_ingamehr = $_POST['insInGameHour'];
+        $new_allyformationdate = $_POST['insFormDate'];
+        $new_num_missions = $_POST['insNumMissions'];
+
+        // you need the wrap the old name and new name values with single quotations
+        executePlainSQL("UPDATE Player_Info 
+                        SET playerName='" . $new_pname . "', 
+                            region='" . $new_pregion . "',
+                            joinDate=TO_DATE('" . $new_pjoindate . "', 'YYYY-MM-DD'),
+                            inGameHour='" . $new_ingamehr . "',
+                            formDate=TO_DATE('" . $new_allyformationdate . "', 'YYYY-MM-DD'),
+                            numMissions='" . $new_num_missions . "'
+                        WHERE PID='" . $selected_pid . "'");
+        oci_commit($db_conn);
+    }
 
 	function handleSelectRequest() {
 		global $db_conn;
@@ -688,12 +715,12 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 		if (connectToDB()) {
 			if (array_key_exists('resetTablesRequest', $_POST)) {
 				handleResetRequest();
-			// } else if (array_key_exists('updateQueryRequest', $_POST)) {
-			// 	handleUpdateRequest();
 			} else if (array_key_exists('insertQueryRequest', $_POST)) {
 				handleInsertRequest();
 			} else if (array_key_exists('deleteQueryRequest', $_POST)) {
 				handleDeleteRequest();
+			} else if (array_key_exists('updateQueryRequest', $_POST)) {
+				handleUpdateRequest();
 			}
 			disconnectFromDB();
 		}
