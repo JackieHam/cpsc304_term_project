@@ -114,7 +114,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	<hr />
 
-	<h2>Count the Tuples in Player Info</h2>
+	<h2>Count the Number of Records in Player Info</h2>
 	<form method="GET" action="m4.php">
 		<input type="hidden" id="countTupleRequest" name="countTupleRequest">
 		<input type="submit" name="countTuples"></p>
@@ -122,11 +122,37 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	<hr />
 
-	<h2>Display Tuples in Player Info</h2>
+	<h2>Display All Records in Player Info</h2>
 	<form method="GET" action="m4.php">
 		<input type="hidden" id="displayTuplesRequest" name="displayTuplesRequest">
 		<input type="submit" name="displayTuples"></p>
 	</form>
+
+	<hr />
+
+	<h2>Display All Records in Player Record</h2>
+	<form method="GET" action="m4.php">
+		<input type="hidden" id="displayrecordRequest" name="displayrecordRequest">
+		<input type="submit" name="displayrecord"></p>
+	</form>
+
+	<hr />
+
+	<h2>Display All Records in Mission</h2>
+	<form method="GET" action="m4.php">
+		<input type="hidden" id="displaymissionRequest" name="displaymissionRequest">
+		<input type="submit" name="displaymission"></p>
+	</form>
+
+	<hr />
+
+	<h2>Compute Maximum Average Time (Minutes) Spent on Each Mission Grouped by Record ID</h2>
+	<form method="GET" action="m4.php">
+		<input type="hidden" id="nestedAggRequest" name="nestedAggRequest">
+		<input type="submit" name="nestedAgg"></p>
+	</form>
+
+	<hr />
 
 
 	<?php
@@ -475,6 +501,33 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 		echo "<script type='text/javascript'>alert('Successfully retrieved data!');</script>";
 	}
 
+	function handleNestedAggRequest() {
+		global $db_conn;
+
+		executePlainSQL("CREATE VIEW Temp AS
+						SELECT RID, AVG(durationInMinutes) AS avgTime
+						FROM Mission2
+						GROUP BY RID");
+
+
+        $result = executePlainSQL("SELECT Temp.RID AS RID, Temp.avgTime AS result
+									FROM Temp
+									WHERE Temp.avgTime = (SELECT MAX(Temp.avgTime)
+														FROM Temp)");
+		
+		echo "<br>Maximum Average Time Spent and the Owning Record ID:<br>";
+		echo "<table>";
+		echo "<tr><th>Record ID</th><th>Average Time Spent</th></tr>";
+
+		while ($row = OCI_Fetch_Array($result, OCI_ASSOC)) {
+			echo "<tr><td>" . $row["RID"] . "</td><td>" . $row["RESULT"] . "</td></tr>";
+		}
+
+		echo "</table>";
+
+		echo "<script type='text/javascript'>alert('Successfully retrieved data!');</script>";
+	}
+
 
 	function handleCountRequest()
 	{
@@ -492,6 +545,36 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 		global $db_conn;
 		$result = executePlainSQL("SELECT * FROM Player_Info");
 		printResult($result);
+	}
+
+	function handleDisplayRecordRequest() {
+		global $db_conn;
+		$result = executePlainSQL("SELECT * FROM Player_Record2");
+
+		echo "<br>Retrieved data from table Player Record:<br>";
+		echo "<table>";
+		echo "<tr><th>Record ID</th><th>Total Points</th></tr>";
+
+		while ($row = OCI_Fetch_Array($result, OCI_ASSOC)) {
+			echo "<tr><td>" . $row["RID"] . "</td><td>" . $row["TOTALPOINTS"] . "</td></tr>"; //or just use "echo $row[0]"
+		}
+
+		echo "</table>";
+	}
+
+	function handleDisplayMissionRequest() {
+		global $db_conn;
+		$result = executePlainSQL("SELECT * FROM Mission2");
+
+		echo "<br>Retrieved data from table Mission:<br>";
+		echo "<table>";
+		echo "<tr><th>Mission ID</th><th>Record ID</th><th>Mission Name</th><th>Completion Status</th><th>Number of Attempts</th><th>Duration in Minutes</th></tr>";
+
+		while ($row = OCI_Fetch_Array($result, OCI_ASSOC)) {
+			echo "<tr><td>" . $row["MID"] . "</td><td>" . $row["RID"] . "</td><td>" . $row["MISSIONNAME"] . "</td><td>" . $row["COMPLETIONSTATUS"] . "</td><td>" . $row["NUMATTEMPTM"] . "</td><td>" . $row["DURATIONINMINUTES"] . "</td></tr>"; //or just use "echo $row[0]"
+		}
+
+		echo "</table>";
 	}
 
 	// HANDLE ALL POST ROUTES
@@ -525,14 +608,21 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 				handleAggGroupByRequest();
 			} else if (array_key_exists('aggHaving', $_GET)) {
 				handleAggHavingRequest();
+			} else if (array_key_exists('displayrecord', $_GET)) {
+				handleDisplayRecordRequest();
+			} else if (array_key_exists('displaymission', $_GET)) {
+				handleDisplayMissionRequest();
+			} else if (array_key_exists('nestedAgg', $_GET)) {
+				handleNestedAggRequest();
 			}
-				disconnectFromDB();
+
+			disconnectFromDB();
 		}
 	}
 
 	if (isset($_POST['reset']) || isset($_POST['updateSubmit']) || isset($_POST['insertSubmit'])) {
 		handlePOSTRequest();
-	} else if (isset($_GET['countTupleRequest']) || isset($_GET['displayTuplesRequest']) || isset($_GET['selectQueryRequest']) || isset($_GET['aggGroupByRequest']) || isset($_GET['aggHavingRequest'])) {
+	} else if (isset($_GET['countTupleRequest']) || isset($_GET['displayTuplesRequest']) || isset($_GET['selectQueryRequest']) || isset($_GET['aggGroupByRequest']) || isset($_GET['displayrecordRequest']) || isset($_GET['displaymissionRequest']) || isset($_GET['nestedAggRequest'])) {
 		handleGETRequest();
 	}
 

@@ -52,6 +52,17 @@ CREATE TABLE Player_Info (
 	FOREIGN KEY(NID) references NPC_Ally2 ON DELETE CASCADE
 );
 
+CREATE TABLE Mission2 (
+    MID varchar(30) PRIMARY KEY, 
+    RID varchar(30),
+    missionName varchar(60), 
+    completionStatus integer, 
+    numAttemptM integer DEFAULT 0, 
+    durationInMinutes integer DEFAULT 0,
+    FOREIGN KEY (RID) references Player_Record2 ON DELETE CASCADE
+);
+
+
 
 	INSERT
 	INTO 		NPC_Ally1 (perk, pointDeduction)
@@ -190,3 +201,24 @@ CREATE TABLE Player_Info (
 	INSERT 
 	INTO 		Player_Info 
 	VALUES 		('P6', 'R6', 'N6', 'Diego Garcia', 'South America', TO_DATE ('2019-05-22', 'YYYY-MM-DD'), 250, TO_DATE ('2019-05-22', 'YYYY-MM-DD'), 79);
+
+
+    INSERT
+	INTO 		Mission2 (MID, RID, missionName, completionStatus, numAttemptM, durationInMinutes)
+	VALUES	    ('M1', 'R1', 'Nest', 67, 12, 340);
+
+	INSERT
+	INTO 		Mission2 (MID, RID, missionName, completionStatus, numAttemptM, durationInMinutes)
+	VALUES	    ('M2', 'R1', 'Angus', 45, 42, 240);
+
+	INSERT
+	INTO 		Mission2 (MID, RID, missionName, completionStatus, numAttemptM, durationInMinutes)
+	VALUES	    ('M3', 'R1', 'HEBB', 34, 15, 350);
+
+	INSERT
+	INTO 		Mission2 (MID, RID, missionName, completionStatus, numAttemptM, durationInMinutes)
+	VALUES	    ('M4', 'R4', 'Hennings', 47, 52, 123);
+
+	INSERT
+	INTO 		Mission2 (MID, RID, missionName, completionStatus, numAttemptM,  durationInMinutes)
+	VALUES	    ('M5', 'R5', 'Buchanan', 97, 12, 100);
