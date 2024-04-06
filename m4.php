@@ -162,7 +162,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	<hr />
 
-<!-- Nested Aggregation -->
+<!-- Nested Aggregation on Mission2 -->
 	<h2>Compute Maximum Average Time (Minutes) Spent on Each Mission Grouped by Record ID</h2>
 	<form method="GET" action="m4.php">
 		<input type="hidden" id="nestedAggRequest" name="nestedAggRequest">
@@ -171,7 +171,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	<hr />
 
-<!-- Division -->
+<!-- Division on Player_Record2 and Mission2-->
 	<h2>Find Record IDs of Records that Track All Missions</h2>
 	<form method="GET" action="m4.php">
 		<input type="hidden" id="divisionRequest" name="divisionRequest">
