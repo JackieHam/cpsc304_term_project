@@ -217,8 +217,16 @@ CREATE TABLE Mission2 (
 
 	INSERT
 	INTO 		Mission2 (MID, RID, missionName, completionStatus, numAttemptM, durationInMinutes)
-	VALUES	    ('M4', 'R4', 'Hennings', 47, 52, 123);
+	VALUES	    ('M4', 'R4', 'Nest', 47, 52, 123);
+
+    INSERT
+	INTO 		Mission2 (MID, RID, missionName, completionStatus, numAttemptM, durationInMinutes)
+	VALUES	    ('M5', 'R4', 'HEBB', 47, 52, 123);
 
 	INSERT
 	INTO 		Mission2 (MID, RID, missionName, completionStatus, numAttemptM,  durationInMinutes)
-	VALUES	    ('M5', 'R5', 'Buchanan', 97, 12, 100);
+	VALUES	    ('M6', 'R5', 'Angus', 97, 12, 100);
+
+        INSERT
+	INTO 		Mission2 (MID, RID, missionName, completionStatus, numAttemptM, durationInMinutes)
+	VALUES	    ('M7', 'R4', 'Angus', 47, 52, 123);

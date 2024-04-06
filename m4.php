@@ -30,6 +30,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 	<title>Group 72 M4, M5</title>
 </head>
 
+<!-- Reset Tables -->
 <body>
 	<h2>Reset All Tables</h2>
 	<p>If you wish to reset the table press on the reset button. If this is the first time you're running this page, you MUST use reset</p>
@@ -42,6 +43,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	<hr />
 
+<!-- Insertion -->
 	<h2>Insert New Player Info</h2>
 	<form method="POST" action="m4.php">
 		<input type="hidden" id="insertQueryRequest" name="insertQueryRequest">
@@ -59,7 +61,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	<hr />
 
-
+<!-- Selection -->
 	<h2>Search for Player Info (case sensitive, please make sure you entered the correct case)</h2>
 	<form method="GET" action="m4.php">
 	<input type="hidden" id = "selectQueryRequest" name="selectQueryRequest">
@@ -98,6 +100,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	<hr />
 
+<!-- Aggregation with Group By -->
 	<h2>Show Total In Game Hours of All Players by Region</h2>
 	<form method="GET" action="m4.php">
 		<input type="hidden" id="aggGroupByRequest" name="aggGroupByRequest">
@@ -106,6 +109,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	<hr />
 
+<!-- Aggregation with Having -->
 	<h2>Show Total Missions of All Player by Region (only show regions with total missions >= 10)</h2>
 	<form method="GET" action="m4.php">
 		<input type="hidden" id="aggHavingRequest" name="aggHavingRequest">
@@ -114,6 +118,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	<hr />
 
+<!-- Aggregation -->
 	<h2>Count the Number of Records in Player Info</h2>
 	<form method="GET" action="m4.php">
 		<input type="hidden" id="countTupleRequest" name="countTupleRequest">
@@ -122,6 +127,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	<hr />
 
+<!-- View All Tuples in Player_Info Table -->
 	<h2>Display All Records in Player Info</h2>
 	<form method="GET" action="m4.php">
 		<input type="hidden" id="displayTuplesRequest" name="displayTuplesRequest">
@@ -130,12 +136,14 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	<hr />
 
+<!-- View All Tuples in Player_Record2 Table -->
 	<h2>Display All Records in Player Record</h2>
 	<form method="GET" action="m4.php">
 		<input type="hidden" id="displayrecordRequest" name="displayrecordRequest">
 		<input type="submit" name="displayrecord"></p>
 	</form>
 
+<!-- Join Player_Info, Player_Record2-->
 	<h2>Display Player Info and Player Record of Players Satisfying Criteria</h2>
 	<form method="GET" action="m4.php">
 		<input type="hidden" id="joinRequest" name="joinRequest">
@@ -145,6 +153,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	<hr />
 
+<!-- View All Tuples in Mission Table -->
 	<h2>Display All Records in Mission</h2>
 	<form method="GET" action="m4.php">
 		<input type="hidden" id="displaymissionRequest" name="displaymissionRequest">
@@ -153,6 +162,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	<hr />
 
+<!-- Nested Aggregation -->
 	<h2>Compute Maximum Average Time (Minutes) Spent on Each Mission Grouped by Record ID</h2>
 	<form method="GET" action="m4.php">
 		<input type="hidden" id="nestedAggRequest" name="nestedAggRequest">
@@ -160,6 +170,13 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 	</form>
 
 	<hr />
+
+<!-- Division -->
+	<h2>Find Record IDs of Records that Track All Missions</h2>
+	<form method="GET" action="m4.php">
+		<input type="hidden" id="divisionRequest" name="divisionRequest">
+		<input type="submit" name="division"></p>
+	</form>
 
 
 	<?php
@@ -488,6 +505,30 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	}
 
+	function handleDivisionRequest() {
+		global $db_conn;
+
+		$result = executePlainSQL("SELECT Player_Record2.RID FROM Player_Record2 WHERE NOT EXISTS ((SELECT DISTINCT Mission2.missionName
+																									FROM Mission2)
+																									MINUS
+																									(SELECT DISTINCT Mission2.missionName
+																									 FROM Mission2
+																									 WHERE Mission2.RID = Player_Record2.RID)
+																									)");
+
+		echo "<br>Record with missions that cover all possible mission names:<br>";
+		echo "<table>";
+		echo "<tr><th>Record ID</th></tr>";
+
+		while ($row = OCI_Fetch_Array($result, OCI_ASSOC)) {
+			echo "<tr><td>" . $row["RID"] . "</td></tr>";
+		}
+
+		echo "</table>";
+
+		echo "<script type='text/javascript'>alert('Successfully retrieved data!');</script>";
+	}
+
 	
 	function handleAggGroupByRequest() {
 		global $db_conn;
@@ -640,6 +681,8 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 				handleNestedAggRequest();
 			} else if (array_key_exists('join', $_GET)) {
 				handleJoinRequest();
+			} else if (array_key_exists('division', $_GET)) {
+				handleDivisionRequest();
 			}
 
 			disconnectFromDB();
@@ -648,7 +691,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	if (isset($_POST['reset']) || isset($_POST['updateSubmit']) || isset($_POST['insertSubmit'])) {
 		handlePOSTRequest();
-	} else if (isset($_GET['countTupleRequest']) || isset($_GET['displayTuplesRequest']) || isset($_GET['selectQueryRequest']) || isset($_GET['aggGroupByRequest']) || isset($_GET['displayrecordRequest']) || isset($_GET['displaymissionRequest']) || isset($_GET['nestedAggRequest']) || isset($_GET['joinRequest'])) {
+	} else if (isset($_GET['countTupleRequest']) || isset($_GET['displayTuplesRequest']) || isset($_GET['selectQueryRequest']) || isset($_GET['aggGroupByRequest']) || isset($_GET['displayrecordRequest']) || isset($_GET['displaymissionRequest']) || isset($_GET['nestedAggRequest']) || isset($_GET['joinRequest']) || isset($_GET['divisionRequest'])) {
 		handleGETRequest();
 	}
 
