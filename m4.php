@@ -759,7 +759,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	if (isset($_POST['reset']) || isset($_POST['updateSubmit']) || isset($_POST['insertSubmit']) || isset($_POST['deleteSubmit'])) {
 		handlePOSTRequest();
-	} else if (isset($_GET['countTupleRequest']) || isset($_GET['displayTuplesRequest']) || isset($_GET['selectQueryRequest']) || isset($_GET['aggGroupByRequest']) || isset($_GET['displayrecordRequest']) || isset($_GET['displaymissionRequest']) || isset($_GET['nestedAggRequest']) || isset($_GET['joinRequest']) || isset($_GET['divisionRequest'])) {
+	} else if (isset($_GET['countTupleRequest']) || isset($_GET['displayTuplesRequest']) || isset($_GET['selectQueryRequest']) || isset($_GET['aggGroupByRequest']) || isset($_GET['aggHavingRequest']) || isset($_GET['displayrecordRequest']) || isset($_GET['displaymissionRequest']) || isset($_GET['nestedAggRequest']) || isset($_GET['joinRequest']) || isset($_GET['divisionRequest'])) {
 		handleGETRequest();
 	}
 
