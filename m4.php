@@ -136,6 +136,13 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 		<input type="submit" name="displayrecord"></p>
 	</form>
 
+	<h2>Display Player Info and Player Record of Players Satisfying Criteria</h2>
+	<form method="GET" action="m4.php">
+		<input type="hidden" id="joinRequest" name="joinRequest">
+		Total Points >= <input type="integer" name="minPoint"> <br /><br />
+		<input type="submit" name="join"></p>
+	</form>
+
 	<hr />
 
 	<h2>Display All Records in Mission</h2>
@@ -464,6 +471,23 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 		echo "<script type='text/javascript'>alert('Successfully retrieved records!');</script>";
 	}
 
+	function handleJoinRequest() {
+		global $db_conn;
+
+		$minPoint = $_GET["minPoint"];
+		$result = executePlainSQL("SELECT * FROM Player_Info, Player_Record2 WHERE Player_Info.RID = Player_Record2.RID AND totalPoints >= $minPoint");
+		echo "<br>Retrieved data from table Player Info and Player Record:<br>";
+		echo "<table>";
+		echo "<tr><th>Player ID</th><th>Record ID</th><th>NPC ID</th><th>Player Name</th><th>Region</th><th>Join Date</th><th>In Game Hour</th><th>Ally Form Date</th><th>Number of Missions</th><th>Total Points</th></tr>";
+
+		while ($row = OCI_Fetch_Array($result, OCI_ASSOC)) {
+			echo "<tr><td>" . $row["PID"] . "</td><td>" . $row["RID"] . "</td><td>" . $row["NID"] . "</td><td>" . $row['PLAYERNAME'] . "</td><td>" . $row["REGION"] . "</td><td>" . $row["JOINDATE"] . "</td><td>" . $row["INGAMEHOUR"] . "</td><td>" . $row["FORMDATE"] . "</td><td>" . $row["NUMMISSIONS"] . "</td><td>" . $row["TOTALPOINTS"] . "</td></tr>"; //or just use "echo $row[0]"
+		}
+
+		echo "</table>";
+
+	}
+
 	
 	function handleAggGroupByRequest() {
 		global $db_conn;
@@ -614,6 +638,8 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 				handleDisplayMissionRequest();
 			} else if (array_key_exists('nestedAgg', $_GET)) {
 				handleNestedAggRequest();
+			} else if (array_key_exists('join', $_GET)) {
+				handleJoinRequest();
 			}
 
 			disconnectFromDB();
@@ -622,7 +648,7 @@ $show_debug_alert_messages = false; // show which methods are being triggered (s
 
 	if (isset($_POST['reset']) || isset($_POST['updateSubmit']) || isset($_POST['insertSubmit'])) {
 		handlePOSTRequest();
-	} else if (isset($_GET['countTupleRequest']) || isset($_GET['displayTuplesRequest']) || isset($_GET['selectQueryRequest']) || isset($_GET['aggGroupByRequest']) || isset($_GET['displayrecordRequest']) || isset($_GET['displaymissionRequest']) || isset($_GET['nestedAggRequest'])) {
+	} else if (isset($_GET['countTupleRequest']) || isset($_GET['displayTuplesRequest']) || isset($_GET['selectQueryRequest']) || isset($_GET['aggGroupByRequest']) || isset($_GET['displayrecordRequest']) || isset($_GET['displaymissionRequest']) || isset($_GET['nestedAggRequest']) || isset($_GET['joinRequest'])) {
 		handleGETRequest();
 	}
 
